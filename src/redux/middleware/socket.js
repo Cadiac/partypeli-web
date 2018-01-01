@@ -1,37 +1,35 @@
+/* eslint-disable no-case-declarations */
+
 import { Socket } from 'phoenix';
-import { getType } from 'typesafe-actions';
-import { actions as socketActions } from '../socket';
+import * as socket from '../socket';
 import config from '../../utils/config';
 
-let socket = null;
-let channel = null;
+let currentSocket = null;
 
 // This looks like shit but works
-const socketMiddleware = ({ dispatch }) => next => (action) => {
+const socketMiddleware = ({ dispatch, getState }) => next => (action) => {
   switch (action.type) {
-    case getType(socketActions.openConnection):
+    case socket.SOCKET_REQUEST_CONNECT:
+      currentSocket = new Socket(`${config.apiUrl}/socket`, { params: { token: 'token' } });
+      currentSocket.onOpen(() => dispatch(socket.actions.onSocketOpen()));
+      currentSocket.onError(() => dispatch(socket.actions.onSocketError()));
+      currentSocket.onClose(() => dispatch(socket.actions.onSocketClose()));
 
-      socket = new Socket(`${config.apiUrl}/socket`, { params: { token: 'token' } });
-      socket.onOpen(() => dispatch(socketActions.onSocketOpen()));
-      socket.onError(() => dispatch(socketActions.onSocketError()));
-      socket.onClose(() => dispatch(socketActions.onSocketClose()));
-
-      socket.connect();
+      currentSocket.connect();
       break;
 
-    case getType(socketActions.onSocketOpen):
-      dispatch(socketActions.joinChannel('game:lobby'));
+    case socket.SOCKET_CONNECTION_OPEN:
+      const { lobbyId } = getState().socket;
+      dispatch(socket.actions.joinChannel(lobbyId));
       break;
 
-    case getType(socketActions.joinChannel):
-      channel = socket.channel(action.payload, {});
+    case socket.CHANNEL_REQUEST_JOIN:
+      const channel = currentSocket.channel(action.payload, {});
       channel.join()
-        .receive('ok', (resp) => { console.log('Joined successfully', resp, channel); })
-        .receive('error', (resp) => { console.log('Unable to join', resp); })
-        .receive('timeout', () => console.log('Networking issue. Still waiting...'));
+        .receive('ok', () => dispatch(socket.actions.onChannelJoin(channel)));
 
-      channel.onError(() => dispatch(socketActions.onChannelError(action.payload)));
-      channel.onClose(() => dispatch(socketActions.onChannelClose(action.payload)));
+      channel.onError(() => dispatch(socket.actions.onChannelError(action.payload)));
+      channel.onClose(() => dispatch(socket.actions.onChannelClose(action.payload)));
       break;
 
     default:
