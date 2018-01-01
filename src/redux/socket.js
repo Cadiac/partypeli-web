@@ -5,9 +5,11 @@ export const SOCKET_CONNECTION_OPEN = 'SOCKET_CONNECTION_OPEN';
 export const SOCKET_CONNECTION_ERROR = 'SOCKET_CONNECTION_ERROR';
 export const SOCKET_CONNECTION_CLOSE = 'SOCKET_CONNECTION_CLOSE';
 export const CHANNEL_REQUEST_JOIN = 'CHANNEL_REQUEST_JOIN';
-export const CHANNEL_CONNECTION_ERROR = 'CHANNEL_CONNECTION_ERROR';
-export const CHANNEL_CONNECTION_CLOSE = 'CHANNEL_CONNECTION_CLOSE';
-export const CHANNEL_CONNECTION_OPEN = 'CHANNEL_CONNECTION_OPEN';
+export const CHANNEL_REQUEST_ERROR = 'CHANNEL_REQUEST_ERROR';
+export const CHANNEL_REQUEST_TIMEOUT = 'CHANNEL_REQUEST_TIMEOUT';
+export const CHANNEL_OPEN = 'CHANNEL_OPEN';
+export const CHANNEL_ERROR = 'CHANNEL_ERROR';
+export const CHANNEL_CLOSE = 'CHANNEL_CLOSE';
 export const USER_SET_LOBBY_ID = 'USER_SET_LOBBY_ID';
 
 // ACTIONS
@@ -18,9 +20,11 @@ export const actions = {
   onSocketClose: () => ({ type: SOCKET_CONNECTION_CLOSE }),
   onSocketError: () => ({ type: SOCKET_CONNECTION_ERROR }),
   joinChannel: channel => ({ type: CHANNEL_REQUEST_JOIN, payload: channel }),
-  onChannelJoin: channel => ({ type: CHANNEL_CONNECTION_OPEN, payload: channel }),
-  onChannelClose: channel => ({ type: CHANNEL_CONNECTION_CLOSE, payload: channel }),
-  onChannelError: channel => ({ type: CHANNEL_CONNECTION_ERROR, payload: channel }),
+  onChannelJoinError: channel => ({ type: CHANNEL_REQUEST_ERROR, payload: channel }),
+  onChannelJoinTimeout: channel => ({ type: CHANNEL_REQUEST_TIMEOUT, payload: channel }),
+  onChannelJoin: channel => ({ type: CHANNEL_OPEN, payload: channel }),
+  onChannelClose: channel => ({ type: CHANNEL_CLOSE, payload: channel }),
+  onChannelError: channel => ({ type: CHANNEL_ERROR, payload: channel }),
   setLobbyId: id => ({ type: USER_SET_LOBBY_ID, payload: id }),
 };
 
@@ -28,6 +32,7 @@ export const actions = {
 
 const initialState = {
   isOpen: false,
+  connecting: false,
   hasError: false,
   channels: [],
   lobbyId: '',
@@ -38,17 +43,20 @@ export function socket(state = initialState, action) {
     case SOCKET_REQUEST_CONNECT:
       return {
         ...state,
+        connecting: true,
         hasError: false,
       };
     case SOCKET_CONNECTION_OPEN:
       return {
         ...state,
         hasError: false,
+        connecting: false,
         isOpen: true,
       };
     case SOCKET_CONNECTION_ERROR:
       return {
         ...state,
+        connecting: false,
         hasError: true,
       };
     case SOCKET_CONNECTION_CLOSE:
@@ -56,26 +64,31 @@ export function socket(state = initialState, action) {
         ...state,
         isOpen: true,
         hasError: false,
+        connecting: false,
         channels: [],
       };
     case CHANNEL_REQUEST_JOIN:
       return {
         ...state,
+        connecting: true,
       };
-    case CHANNEL_CONNECTION_OPEN:
+    case CHANNEL_OPEN:
       return {
         ...state,
+        connecting: false,
         channels: state.channels.filter(channel => channel !== action.payload),
       };
-    case CHANNEL_CONNECTION_CLOSE:
+    case CHANNEL_CLOSE:
       return {
         ...state,
+        connecting: false,
         channels: state.channels.filter(channel => channel !== action.payload),
       };
-    case CHANNEL_CONNECTION_ERROR:
+    case CHANNEL_ERROR:
       return {
         ...state,
         hasError: true,
+        connecting: false,
         channels: state.channels.filter(channel => channel !== action.payload),
       };
     case USER_SET_LOBBY_ID:

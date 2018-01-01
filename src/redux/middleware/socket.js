@@ -7,7 +7,7 @@ import config from '../../utils/config';
 let currentSocket = null;
 
 // This looks like shit but works
-const socketMiddleware = ({ dispatch, getState }) => next => (action) => {
+const socketMiddleware = ({ dispatch }) => next => (action) => {
   switch (action.type) {
     case socket.SOCKET_REQUEST_CONNECT:
       currentSocket = new Socket(`${config.apiUrl}/socket`, { params: { token: 'token' } });
@@ -18,15 +18,12 @@ const socketMiddleware = ({ dispatch, getState }) => next => (action) => {
       currentSocket.connect();
       break;
 
-    case socket.SOCKET_CONNECTION_OPEN:
-      const { lobbyId } = getState().socket;
-      dispatch(socket.actions.joinChannel(lobbyId));
-      break;
-
     case socket.CHANNEL_REQUEST_JOIN:
       const channel = currentSocket.channel(action.payload, {});
       channel.join()
-        .receive('ok', () => dispatch(socket.actions.onChannelJoin(channel)));
+        .receive('ok', () => dispatch(socket.actions.onChannelJoin(channel)))
+        .receive('error', () => dispatch(socket.actions.onChannelJoinError(channel)))
+        .receive('timeout', () => dispatch(socket.actions.onChannelJoinTimeout(channel)));
 
       channel.onError(() => dispatch(socket.actions.onChannelError(action.payload)));
       channel.onClose(() => dispatch(socket.actions.onChannelClose(action.payload)));

@@ -12,10 +12,17 @@ import history from './history';
 import IndexPage from './pages/IndexPage';
 import LobbyPage from './pages/LobbyPage';
 
+import { actions as socketActions } from './redux/socket';
+
 import registerServiceWorker from './registerServiceWorker';
 import './index.css';
 
 import './game/game';
+
+function openSocket() {
+  const { dispatch } = store;
+  dispatch(socketActions.openConnection());
+}
 
 ReactDOM.render(
   <Provider store={store}>
@@ -30,3 +37,4 @@ ReactDOM.render(
 );
 
 registerServiceWorker();
+openSocket();

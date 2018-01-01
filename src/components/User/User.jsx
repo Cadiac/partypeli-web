@@ -22,7 +22,7 @@ function User({
         addonBefore="Lobby ID"
         onChange={onLobbyIdChange}
       />
-      <Button onClick={onClickConnect}>Connect</Button>
+      <Button onClick={() => onClickConnect(lobbyId)}>Connect</Button>
     </div>
   );
 }

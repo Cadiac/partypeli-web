@@ -16,8 +16,8 @@ export function mapDispatchToProps(dispatch) {
       dispatch(userActions.setUsername(event.currentTarget.value)),
     onLobbyIdChange: event =>
       dispatch(socketActions.setLobbyId(event.currentTarget.value)),
-    onClickConnect: () =>
-      dispatch(socketActions.openConnection()),
+    onClickConnect: lobbyId =>
+      dispatch(socketActions.joinChannel(`game:${lobbyId}`)),
   };
 }
 
