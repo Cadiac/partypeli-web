@@ -1,11 +1,10 @@
 import * as React from 'react';
+import { NavLink } from 'react-router-dom';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
-import { NavLink } from 'react-router-dom';
-
-const LobbyPage = (params) => (
+const LobbyPage = params => (
   <div>
     <Header />
     <h2>Lobby {params.id}</h2>

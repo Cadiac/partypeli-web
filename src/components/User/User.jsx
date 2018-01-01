@@ -1,7 +1,10 @@
 import * as React from 'react';
 import { Button, Input } from 'antd';
+import PropTypes from 'prop-types'; // ES6
 
-function User({username = '', lobbyId = '', onUsernameChange, onLobbyIdChange, onClickConnect}) {
+function User({
+  username = '', lobbyId = '', onUsernameChange, onLobbyIdChange, onClickConnect,
+}) {
   return (
     <div className="hello">
       <div className="greeting">
@@ -23,5 +26,13 @@ function User({username = '', lobbyId = '', onUsernameChange, onLobbyIdChange, o
     </div>
   );
 }
+
+User.propTypes = {
+  username: PropTypes.string.isRequired,
+  lobbyId: PropTypes.string.isRequired,
+  onUsernameChange: PropTypes.func.isRequired,
+  onLobbyIdChange: PropTypes.func.isRequired,
+  onClickConnect: PropTypes.func.isRequired,
+};
 
 export default User;

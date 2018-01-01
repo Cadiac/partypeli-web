@@ -1,5 +1,5 @@
-import User from '../components/User/User';
 import { connect } from 'react-redux';
+import User from '../components/User/User';
 import { actions as userActions } from '../redux/user';
 import { actions } from '../redux/socket';
 
@@ -12,9 +12,9 @@ export function mapStateToProps(state) {
 
 export function mapDispatchToProps(dispatch) {
   return {
-    onUsernameChange: (event) =>
+    onUsernameChange: event =>
       dispatch(userActions.setUsername(event.currentTarget.value)),
-    onLobbyIdChange: (event) =>
+    onLobbyIdChange: event =>
       dispatch(userActions.setLobbyId(event.currentTarget.value)),
     onClickConnect: () =>
       dispatch(actions.openConnection()),

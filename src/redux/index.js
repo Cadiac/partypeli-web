@@ -10,3 +10,5 @@ export const rootReducer = combineReducers({
   user,
   socket,
 });
+
+export default rootReducer;

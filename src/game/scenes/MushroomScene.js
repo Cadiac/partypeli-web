@@ -1,6 +1,5 @@
-import Mushroom from '../sprites/Mushroom';
-
 import * as Phaser from 'phaser';
+import Mushroom from '../sprites/Mushroom';
 
 class MushroomScene extends Phaser.Scene {
   constructor() {

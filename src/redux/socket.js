@@ -17,15 +17,15 @@ export const actions = {
   onSocketOpen: createAction(SOCKET_CONNECTION_OPEN),
   onSocketError: createAction(SOCKET_CONNECTION_ERROR),
   onSocketClose: createAction(SOCKET_CONNECTION_CLOSE),
-  joinChannel: createAction(SOCKET_JOIN_CHANNEL, (channel) => ({
+  joinChannel: createAction(SOCKET_JOIN_CHANNEL, channel => ({
     type: SOCKET_JOIN_CHANNEL,
     payload: channel,
   })),
-  onChannelError: createAction(CHANNEL_CONNECTION_ERROR, (channel) => ({
+  onChannelError: createAction(CHANNEL_CONNECTION_ERROR, channel => ({
     type: CHANNEL_CONNECTION_ERROR,
     payload: channel,
   })),
-  onChannelClose: createAction(CHANNEL_CONNECTION_CLOSE, (channel) => ({
+  onChannelClose: createAction(CHANNEL_CONNECTION_CLOSE, channel => ({
     type: CHANNEL_CONNECTION_CLOSE,
     payload: channel,
   })),

@@ -1,10 +1,9 @@
 import * as React from 'react';
+import { NavLink } from 'react-router-dom';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UserContainer from '../containers/UserContainer';
-
-import { NavLink } from 'react-router-dom';
 
 const IndexPage = () => (
   <div className="index">

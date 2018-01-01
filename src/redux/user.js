@@ -8,15 +8,15 @@ export const USER_SET_LOBBY_ID = 'USER_SET_LOBBY_ID';
 // ACTIONS
 
 export const actions = {
-  setUsername: createAction(USER_SET_USERNAME, (username) => ({
+  setUsername: createAction(USER_SET_USERNAME, username => ({
     type: USER_SET_USERNAME,
     payload: username,
   })),
 
-  setLobbyId: createAction(USER_SET_LOBBY_ID, (id) => ({
+  setLobbyId: createAction(USER_SET_LOBBY_ID, id => ({
     type: USER_SET_LOBBY_ID,
-    payload: id
-  }))
+    payload: id,
+  })),
 };
 
 // REDUCER

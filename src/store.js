@@ -10,7 +10,7 @@ import { rootReducer } from './redux/index';
 import history from './history';
 // import { loadState, saveState } from './services/localStorage';
 
-function configureStore(initialState) {
+function configureStore() {
   // configure middlewares
   const middlewares = [
     routerMiddleware(history),
@@ -28,7 +28,7 @@ function configureStore(initialState) {
   return createStore(
     rootReducer,
     // persistedState,
-    applyMiddleware(...middlewares)
+    applyMiddleware(...middlewares),
   );
 }
 
