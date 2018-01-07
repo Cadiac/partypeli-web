@@ -1,12 +1,12 @@
 import { connect } from 'react-redux';
 import User from '../components/User/User';
 import { actions as userActions } from '../redux/user';
-import { actions as socketActions } from '../redux/socket';
+import { actions as connectionActions } from '../redux/connection';
 
 export function mapStateToProps(state) {
   return {
     username: state.user.username,
-    lobbyId: state.socket.lobbyId,
+    lobbyId: '',
   };
 }
 
@@ -14,10 +14,8 @@ export function mapDispatchToProps(dispatch) {
   return {
     onUsernameChange: event =>
       dispatch(userActions.setUsername(event.currentTarget.value)),
-    onLobbyIdChange: event =>
-      dispatch(socketActions.setLobbyId(event.currentTarget.value)),
-    onClickConnect: lobbyId =>
-      dispatch(socketActions.joinChannel(`game:${lobbyId}`)),
+    onLobbyIdChange: event => event,
+    onClickConnect: () => dispatch(connectionActions.createGame()),
   };
 }
 

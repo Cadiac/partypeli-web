@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import PlayerList from '../components/Lobby/PlayerList';
+import PlayerList from '../components/Game/PlayerList';
 
 export function mapStateToProps(state) {
   return {

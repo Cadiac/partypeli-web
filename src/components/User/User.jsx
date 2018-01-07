@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Input } from 'antd';
-import PropTypes from 'prop-types'; // ES6
+import PropTypes from 'prop-types';
 
 function User({
   username = '', lobbyId = '', onUsernameChange, onLobbyIdChange, onClickConnect,

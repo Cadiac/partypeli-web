@@ -3,45 +3,50 @@
 import { Socket } from 'phoenix';
 import { push } from 'react-router-redux';
 
-import * as socket from '../socket';
-import * as game from '../game';
+import * as connection from '../connection';
+
 import config from '../../utils/config';
 
-let currentSocket = null;
-
-// This looks like shit but works
-const socketMiddleware = ({ dispatch }) => next => (action) => {
+const socketMiddleware = ({ dispatch, getState }) => next => (action) => {
   switch (action.type) {
-    case socket.SOCKET_REQUEST_CONNECT:
-      currentSocket = new Socket(`${config.apiUrl}/socket`, { params: { token: 'token' } });
-      currentSocket.onOpen(() => dispatch(socket.actions.onSocketOpen()));
-      currentSocket.onError(() => dispatch(socket.actions.onSocketError()));
-      currentSocket.onClose(() => dispatch(socket.actions.onSocketClose()));
+    case connection.SOCKET_REQUEST_CONNECT:
+      const newSocket = new Socket(`${config.apiUrl}/socket`, {
+        logger: (kind, msg, data) => { console.log(`${kind}: ${msg}`, data); },
+      });
 
-      currentSocket.connect();
+      newSocket.onOpen(() => {
+        dispatch(connection.actions.onSocketOpen(newSocket));
+        dispatch(connection.actions.joinLobby());
+      });
+      newSocket.onError(error => dispatch(connection.actions.onSocketError(error)));
+      newSocket.onClose(() => dispatch(connection.actions.onSocketClose()));
+
+      newSocket.connect();
       break;
 
-    case socket.CHANNEL_REQUEST_JOIN:
-      const channel = currentSocket.channel(action.payload, {});
+    case connection.LOBBY_REQUEST_JOIN:
+      const { socket } = getState().connection;
+      const channel = socket.channel('lobby');
       channel.join()
         .receive('ok', () => {
-          dispatch(socket.actions.onChannelJoin(channel));
-          dispatch(push(`/lobby/${action.payload}`));
+          dispatch(connection.actions.onLobbyOpen(channel));
         })
-        .receive('error', () => dispatch(socket.actions.onChannelJoinError(channel)))
-        .receive('timeout', () => dispatch(socket.actions.onChannelJoinTimeout(channel)));
+        .receive('error', error => dispatch(connection.actions.onLobbyJoinError(error)))
+        .receive('timeout', error => dispatch(connection.actions.onLobbyJoinTimeout(error)));
 
-      channel.onError(() => dispatch(socket.actions.onChannelError(action.payload)));
-      channel.onClose(() => dispatch(socket.actions.onChannelClose(action.payload)));
+      channel.onError(error => dispatch(connection.actions.onLobbyError(error)));
+      channel.onClose(() => dispatch(connection.actions.onLobbyClose()));
+      break;
 
-      channel.on('player:connect', (message) => {
-        dispatch(game.actions.playerConnected(message));
-      });
+    case connection.CREATE_GAME:
+      const { lobbyChannel } = getState().connection;
 
-      channel.on('player:disconnect', (message) => {
-        dispatch(game.actions.playerDisconnected(message));
-      });
-
+      if (lobbyChannel) {
+        lobbyChannel.push(connection.CREATE_GAME)
+          .receive('ok', (payload) => {
+            dispatch(push(`/game/${payload.game_id}`));
+          });
+      }
       break;
 
     default:
