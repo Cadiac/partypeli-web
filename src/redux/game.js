@@ -39,13 +39,7 @@ export const actions = {
 
     channel.join()
       .receive('ok', (data) => {
-        console.log('Got data');
-        console.log(data);
-        channel.push(GAME_GET_DATA, { game_id: gameId, player_id: playerId })
-          .receive('ok', (payload) => {
-            dispatch(actions.setChannelAndGame(channel, payload.game));
-          });
-        // channel.push(JOINED_GAME);
+        dispatch(actions.setChannelAndGame(channel, data.game));
       })
       .receive('error', (payload) => {
         if (payload.reason === 'No more players allowed') dispatch(push('/not_found'));
