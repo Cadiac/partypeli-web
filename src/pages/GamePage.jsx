@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 
-import * as gameActions from '../redux/actions/game';
+import { actions as gameActions } from '../redux/game';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -11,8 +11,10 @@ import PlayerListContainer from '../containers/PlayerListContainer';
 
 class GamePage extends React.Component {
   componentDidMount() {
-    const { playerId, socket, gameId } = this.props;
-    this.props.joinGame(socket, playerId, gameId);
+    const {
+      playerId, socket, gameId, username,
+    } = this.props;
+    this.props.joinGame(socket, playerId, gameId, username);
   }
 
   render() {
@@ -31,6 +33,7 @@ class GamePage extends React.Component {
 GamePage.propTypes = {
   gameId: PropTypes.string.isRequired,
   joinGame: PropTypes.func.isRequired,
+  username: PropTypes.string.isRequired,
   socket: PropTypes.object.isRequired,
   playerId: PropTypes.string.isRequired,
 };
@@ -38,15 +41,16 @@ GamePage.propTypes = {
 export function mapStateToProps(state, ownProps) {
   return {
     gameId: ownProps.match.params.id,
-    playerId: 'asfdfg',
+    playerId: state.game.playerId,
+    username: state.game.username,
     socket: state.connection.socket,
   };
 }
 
 export function mapDispatchToProps(dispatch) {
   return {
-    joinGame: (socket, playerId, gameId) =>
-      dispatch(gameActions.joinGame(socket, playerId, gameId)),
+    joinGame: (socket, playerId, gameId, username) =>
+      dispatch(gameActions.joinGame(socket, playerId, gameId, username)),
   };
 }
 

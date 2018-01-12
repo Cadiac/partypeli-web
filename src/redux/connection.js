@@ -26,7 +26,7 @@ export const actions = {
   onLobbyOpen: channel => ({ type: LOBBY_OPEN, payload: channel }),
   onLobbyClose: () => ({ type: LOBBY_CLOSE }),
   onLobbyError: error => ({ type: LOBBY_ERROR, payload: error }),
-  // Lobby channel actions
+  // Lobby channel actions, check middleware
   createGame: () => ({ type: CREATE_GAME }),
 };
 

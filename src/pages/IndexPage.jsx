@@ -3,13 +3,13 @@ import { NavLink } from 'react-router-dom';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import UserContainer from '../containers/UserContainer';
+import JoinGameContainer from '../containers/JoinGameContainer';
 
 const IndexPage = () => (
   <div className="index">
     <Header />
-    <NavLink to="/lobby/123e4567-e89b-12d3-a456-426655440000">Lobby</NavLink>
-    <UserContainer />
+    <NavLink to="/game/1234">Game</NavLink>
+    <JoinGameContainer />
     <Footer />
   </div>
 );

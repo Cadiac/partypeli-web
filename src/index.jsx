@@ -10,7 +10,6 @@ import store from './store';
 import history from './history';
 
 import IndexPage from './pages/IndexPage';
-import LobbyPage from './pages/LobbyPage';
 import GamePage from './pages/GamePage';
 
 import { actions as connectionActions } from './redux/connection';
@@ -28,7 +27,6 @@ ReactDOM.render(
     <ConnectedRouter history={history}>
       <div>
         <Route exact path="/" component={IndexPage} />
-        <Route path="/lobby/:id" component={LobbyPage} />
         <Route path="/game/:id" component={GamePage} />
       </div>
     </ConnectedRouter>
