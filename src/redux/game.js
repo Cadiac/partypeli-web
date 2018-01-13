@@ -27,7 +27,7 @@ export const actions = {
     dispatch({ type: GAME_SET_CHANNEL, payload: channel });
     dispatch(actions.setGame(gameState));
   },
-  joinGame: (socket, playerId, gameId, username) => (dispatch) => {
+  joinGame: (socket, gameId, username) => (dispatch) => {
     // Open game channel
     const channel = socket.channel(`game:${gameId}`, { username });
 

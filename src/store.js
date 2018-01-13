@@ -7,6 +7,8 @@ import socketMiddleware from './redux/middleware/socket';
 
 import { rootReducer } from './redux/index';
 
+import { actions as connectionActions } from './redux/connection';
+
 import history from './history';
 // import { loadState, saveState } from './services/localStorage';
 
@@ -37,6 +39,13 @@ const store = configureStore();
 // store.subscribe(() => {
 //   saveState(store.getState());
 // });
+
+function openSocket() {
+  const { dispatch } = store;
+  dispatch(connectionActions.openConnection());
+}
+
+openSocket();
 
 // export store singleton instance
 export default store;

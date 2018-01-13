@@ -34,7 +34,7 @@ export const actions = {
 // REDUCER
 
 const initialState = {
-  connecting: false,
+  connecting: true,
   error: null,
   socket: null,
   lobbyChannel: null,

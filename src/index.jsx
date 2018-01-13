@@ -9,18 +9,11 @@ import 'antd/dist/antd.css';
 import store from './store';
 import history from './history';
 
-import IndexPage from './pages/IndexPage';
-import GamePage from './pages/GamePage';
-
-import { actions as connectionActions } from './redux/connection';
+import IndexPage from './pages/indexPage';
+import GamePage from './pages/gamePage';
 
 import registerServiceWorker from './registerServiceWorker';
 import './index.css';
-
-function openSocket() {
-  const { dispatch } = store;
-  dispatch(connectionActions.openConnection());
-}
 
 ReactDOM.render(
   <Provider store={store}>
@@ -35,4 +28,3 @@ ReactDOM.render(
 );
 
 registerServiceWorker();
-openSocket();

@@ -1,5 +1,5 @@
 {
-  "name": "combined-test",
+  "name": "partypeli-web",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -105,7 +105,8 @@
     },
     "rules": {
       "no-console": 0,
-      "react/forbid-prop-types": 0
+      "react/forbid-prop-types": 0,
+      "react/require-default-props": 0
     }
   }
 }

@@ -12,9 +12,20 @@ import PlayerListContainer from '../containers/PlayerListContainer';
 class GamePage extends React.Component {
   componentDidMount() {
     const {
-      playerId, socket, gameId, username,
+      socket, gameId, username, connecting,
     } = this.props;
-    this.props.joinGame(socket, playerId, gameId, username);
+
+    if (!connecting && socket && gameId) {
+      this.props.joinGame(socket, gameId, username);
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // Wait until socket has connected before joining game.
+    if (!this.props.socket && nextProps.socket) {
+      const { socket, gameId, username } = nextProps;
+      this.props.joinGame(socket, gameId, username);
+    }
   }
 
   render() {
@@ -34,23 +45,25 @@ GamePage.propTypes = {
   gameId: PropTypes.string.isRequired,
   joinGame: PropTypes.func.isRequired,
   username: PropTypes.string.isRequired,
-  socket: PropTypes.object.isRequired,
-  playerId: PropTypes.string.isRequired,
+  socket: PropTypes.object,
+  // playerId: PropTypes.string.isRequired,
+  connecting: PropTypes.bool.isRequired,
 };
 
 export function mapStateToProps(state, ownProps) {
   return {
     gameId: ownProps.match.params.id,
-    playerId: state.game.playerId,
+    // playerId: state.game.playerId,
     username: state.game.username,
     socket: state.connection.socket,
+    connecting: state.connection.connecting,
   };
 }
 
 export function mapDispatchToProps(dispatch) {
   return {
-    joinGame: (socket, playerId, gameId, username) =>
-      dispatch(gameActions.joinGame(socket, playerId, gameId, username)),
+    joinGame: (socket, gameId, username) =>
+      dispatch(gameActions.joinGame(socket, gameId, username)),
   };
 }
 
