@@ -1,9 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Button } from 'antd';
 import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 
-import { actions as gameActions } from '../redux/game';
+import {
+  actions as gameActions,
+} from '../redux/game';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -33,6 +36,9 @@ class GamePage extends React.Component {
       <div>
         <Header />
         <h2>Game {this.props.gameId}</h2>
+        <Button onClick={this.props.updatePlayers}>
+          Fetch players
+        </Button>
         <PlayerListContainer />
         <NavLink to="/">Etusivu</NavLink>
         <Footer />
@@ -42,18 +48,19 @@ class GamePage extends React.Component {
 }
 
 GamePage.propTypes = {
-  gameId: PropTypes.string.isRequired,
+  // Actions
   joinGame: PropTypes.func.isRequired,
+  updatePlayers: PropTypes.func.isRequired,
+  // Props
+  gameId: PropTypes.string.isRequired,
   username: PropTypes.string.isRequired,
   socket: PropTypes.object,
-  // playerId: PropTypes.string.isRequired,
   connecting: PropTypes.bool.isRequired,
 };
 
 export function mapStateToProps(state, ownProps) {
   return {
     gameId: ownProps.match.params.id,
-    // playerId: state.game.playerId,
     username: state.game.username,
     socket: state.connection.socket,
     connecting: state.connection.connecting,
@@ -64,6 +71,8 @@ export function mapDispatchToProps(dispatch) {
   return {
     joinGame: (socket, gameId, username) =>
       dispatch(gameActions.joinGame(socket, gameId, username)),
+    updatePlayers: () =>
+      dispatch(gameActions.updatePlayers()),
   };
 }
 
