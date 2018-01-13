@@ -20,7 +20,7 @@ function PlayerList({ players }) {
 }
 
 PlayerList.propTypes = {
-  players: PropTypes.arrayOf(PropTypes.string).isRequired,
+  players: PropTypes.object,
 };
 
 export default PlayerList;

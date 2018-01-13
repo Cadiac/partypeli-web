@@ -1,4 +1,5 @@
 import { push } from 'react-router-redux';
+import { createSelector } from 'reselect';
 
 // CONSTANTS
 
@@ -11,7 +12,7 @@ export const GAME_PLAYERS_UPDATED = 'GAME_PLAYERS_UPDATED';
 // These are actions broadcastd by the server
 export const GAME_PLAYER_CONNECTED = 'game:player_connected';
 export const GAME_PLAYER_DISCONNECTED = 'game:player_disconnected';
-export const GAME_MESSAGE_SENT = 'game:message_sent';
+export const GAME_MESSAGE_RECEIVED = 'game:message_received';
 export const GAME_STOPPED = 'game:stopped';
 
 // These are actions we send on the channel, and server replies to them.
@@ -33,12 +34,6 @@ export const actions = {
     // Open game channel
     const channel = socket.channel(`game:${gameId}`, { username });
 
-    // Dispatch _all_ received messages and handle them at reducer level
-    channel.onMessage = ((event, payload) => {
-      dispatch({ type: event, payload });
-      return payload;
-    });
-
     channel.join()
       .receive('ok', (response) => {
         dispatch(actions.setChannelAndGame(channel, response.game));
@@ -47,6 +42,24 @@ export const actions = {
         if (error.reason === 'No more players allowed') dispatch(push('/not_found'));
         if (error.reason === 'Game does not exist') dispatch(push('/not_found'));
       });
+
+    // Dispatch actions based on received messages
+    // and handle them at reducer level
+    channel.on(GAME_PLAYER_CONNECTED, (payload) => {
+      dispatch({ type: GAME_PLAYER_CONNECTED, payload });
+    });
+
+    channel.on(GAME_PLAYER_DISCONNECTED, (payload) => {
+      dispatch({ type: GAME_PLAYER_DISCONNECTED, payload });
+    });
+
+    channel.on(GAME_MESSAGE_RECEIVED, (payload) => {
+      dispatch({ type: GAME_MESSAGE_RECEIVED, payload });
+    });
+
+    channel.on(GAME_STOPPED, (payload) => {
+      dispatch({ type: GAME_STOPPED, payload });
+    });
   },
   updatePlayers: () => (dispatch, getState) => {
     const { gameChannel } = getState().game;
@@ -78,6 +91,7 @@ const initialState = {
   gameChannel: null,
   game: null,
   messages: [],
+  players: {},
 };
 
 export function game(state = initialState, action) {
@@ -105,10 +119,7 @@ export function game(state = initialState, action) {
     case GAME_PLAYERS_UPDATED:
       return {
         ...state,
-        game: {
-          ...state.game,
-          players: action.payload,
-        },
+        players: action.payload,
       };
     case GAME_PLAYER_CONNECTED:
       return state;
@@ -118,3 +129,11 @@ export function game(state = initialState, action) {
       return state;
   }
 }
+
+// SELECTORS
+
+export const playersSelector = state => state.game.players;
+export const playersArraySelector = createSelector(
+  playersSelector,
+  players => Object.entries(players).map(([id, player]) => player),
+);
