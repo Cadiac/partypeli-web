@@ -1,6 +1,9 @@
 import * as React from 'react';
-import { Button, Input } from 'antd';
+import { Button, Input, Icon, Form } from 'antd';
 import PropTypes from 'prop-types';
+import Username from './Username';
+
+const FormItem = Form.Item;
 
 function JoinGameForm({
   username = '',
@@ -10,22 +13,74 @@ function JoinGameForm({
   onClickConnect,
   onClickCreate,
 }) {
+  const formItemLayout = {
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 8 },
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 8 },
+    },
+  };
+
+  const tailFormItemLayout = {
+    wrapperCol: {
+      xs: {
+        span: 24,
+        offset: 0,
+      },
+      sm: {
+        span: 16,
+        offset: 8,
+      },
+    },
+  };
+
   return (
-    <div className="join-game-form">
-      <Input
-        type="text"
-        value={username}
-        addonBefore="Username"
-        onChange={onUsernameChange}
-      />
-      <Input
-        type="text"
-        value={gameId}
-        addonBefore="Game ID"
-        onChange={onGameIdChange}
-      />
-      <Button onClick={() => onClickConnect(gameId)}>Connect</Button>
-      <Button onClick={() => onClickCreate()}>New Game</Button>
+    <div>
+      <Form>
+        <FormItem
+          {...formItemLayout}
+          label="Username"
+        >
+          <Input
+            type="text"
+            value={username}
+            placeholder="Enter your username"
+            prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+            onChange={onUsernameChange}
+          />
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="Game code"
+        >
+          <Input
+            type="text"
+            value={gameId}
+            placeholder="Enter the code visible on main screen"
+            prefix={<Icon type="calculator" style={{ color: 'rgba(0,0,0,.25)' }} />}
+            onChange={onGameIdChange}
+          />
+        </FormItem>
+        <FormItem {...tailFormItemLayout}>
+          <Button
+            type="primary"
+            disabled={username.length === 0}
+            onClick={() => onClickConnect(gameId)}
+          >
+            Connect
+          </Button>
+        </FormItem>
+      </Form>
+      <Form>
+        <FormItem
+          {...tailFormItemLayout}
+        >
+          <Button onClick={() => onClickCreate()}>Create game</Button>
+        </FormItem>
+      </Form>
     </div>
   );
 }

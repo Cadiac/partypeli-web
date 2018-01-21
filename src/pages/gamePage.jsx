@@ -11,6 +11,7 @@ import {
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import PlayerListContainer from '../containers/PlayerListContainer';
+import UsernameContainer from '../containers/UsernameContainer';
 
 class GamePage extends React.Component {
   componentDidMount() {
@@ -36,6 +37,7 @@ class GamePage extends React.Component {
       <div>
         <Header />
         <h2>Game {this.props.gameId}</h2>
+        <UsernameContainer />
         <Button onClick={this.props.updatePlayers}>
           Fetch players
         </Button>

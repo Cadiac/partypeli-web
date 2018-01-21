@@ -11,7 +11,7 @@ function PlayerList({ players }) {
         <List.Item>
           <List.Item.Meta
             avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
-            title={<a href="https://ant.design">{player.name}</a>}
+            title={<a href="https://ant.design">{player.username}</a>}
           />
         </List.Item>
       )}
@@ -20,7 +20,9 @@ function PlayerList({ players }) {
 }
 
 PlayerList.propTypes = {
-  players: PropTypes.object,
+  players: PropTypes.arrayOf(PropTypes.shape({
+    username: PropTypes.string,
+  })),
 };
 
 export default PlayerList;
