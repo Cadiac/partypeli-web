@@ -8,17 +8,20 @@ export const GAME_SET_GAME_ID = 'GAME_SET_GAME_ID';
 export const GAME_SET_GAME = 'GAME_SET_GAME';
 export const GAME_SET_CHANNEL = 'GAME_SET_CHANNEL';
 export const GAME_PLAYERS_UPDATED = 'GAME_PLAYERS_UPDATED';
+export const USERNAME_UPDATED = 'USERNAME_UPDATED';
 
 // These are actions broadcastd by the server
+export const GAME_STOPPED = 'game:stopped';
 export const GAME_PLAYER_CONNECTED = 'game:player_connected';
 export const GAME_PLAYER_DISCONNECTED = 'game:player_disconnected';
 export const GAME_MESSAGE_RECEIVED = 'game:message_received';
-export const GAME_STOPPED = 'game:stopped';
+export const GAME_PLAYER_CHANGED_USERNAME = 'game:player_changed_username';
 
 // These are actions we send on the channel, and server replies to them.
 export const GAME_GET_DATA = 'game:get_data';
 export const GAME_GET_PLAYERS = 'game:get_players';
 export const GAME_SEND_MESSAGE = 'game:send_message';
+export const GAME_CHANGE_USERNAME = 'game:change_username';
 
 // ACTIONS
 
@@ -45,6 +48,10 @@ export const actions = {
 
     // Dispatch actions based on received messages
     // and handle them at reducer level
+    channel.on(GAME_STOPPED, (payload) => {
+      dispatch({ type: GAME_STOPPED, payload });
+    });
+
     channel.on(GAME_PLAYER_CONNECTED, (payload) => {
       dispatch({ type: GAME_PLAYER_CONNECTED, payload });
     });
@@ -57,8 +64,8 @@ export const actions = {
       dispatch({ type: GAME_MESSAGE_RECEIVED, payload });
     });
 
-    channel.on(GAME_STOPPED, (payload) => {
-      dispatch({ type: GAME_STOPPED, payload });
+    channel.on(GAME_PLAYER_CHANGED_USERNAME, (payload) => {
+      dispatch({ type: GAME_PLAYER_CHANGED_USERNAME, payload });
     });
   },
   updatePlayers: () => (dispatch, getState) => {
@@ -70,6 +77,13 @@ export const actions = {
           type: GAME_PLAYERS_UPDATED,
           payload: response.players,
         }));
+    }
+  },
+  changeUsername: () => (dispatch, getState) => {
+    const { gameChannel, username } = getState().game;
+
+    if (gameChannel) {
+      gameChannel.push(GAME_CHANGE_USERNAME, { username });
     }
   },
   getData: () => (dispatch, getState) => {
@@ -109,7 +123,9 @@ export function game(state = initialState, action) {
     case GAME_SET_GAME:
       return {
         ...state,
-        game: action.payload,
+        gameId: action.payload.id,
+        max_players: action.payload.max_players,
+        players: action.payload.players,
       };
     case GAME_SET_CHANNEL:
       return {
@@ -122,8 +138,16 @@ export function game(state = initialState, action) {
         players: action.payload,
       };
     case GAME_PLAYER_CONNECTED:
-      return state;
+      return {
+        ...state,
+        players: {
+          ...state.players,
+          [action.payload.player.id]: action.payload.player,
+        },
+      };
     case GAME_PLAYER_DISCONNECTED:
+      return state;
+    case GAME_PLAYER_CHANGED_USERNAME:
       return state;
     default:
       return state;

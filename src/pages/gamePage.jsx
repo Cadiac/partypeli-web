@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button } from 'antd';
+import { Button, Divider } from 'antd';
 import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 
@@ -38,6 +38,7 @@ class GamePage extends React.Component {
         <Header />
         <h2>Game {this.props.gameId}</h2>
         <UsernameContainer />
+        <Divider />
         <Button onClick={this.props.updatePlayers}>
           Fetch players
         </Button>

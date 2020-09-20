@@ -13,6 +13,8 @@ export function mapDispatchToProps(dispatch) {
   return {
     onUsernameChange: event =>
       dispatch(gameActions.setUsername(event.currentTarget.value)),
+    saveUsername: () =>
+      dispatch(gameActions.changeUsername()),
   };
 }
 
